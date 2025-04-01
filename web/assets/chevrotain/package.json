@@ -1,0 +1,8 @@
+{
+    "name": "mychevrotain",
+    "exports": {
+        "chevrotain": {
+            "types": "./chevrotain.d.ts"
+        }
+    }
+}

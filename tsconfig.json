@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ES2020",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": true, 
+    "rewriteRelativeImportExtensions": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node10",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": false,
+    "baseUrl": "./",
+    //"outFile": "./web/assets/app.js",
+//    "outDir": ".",
+    "rootDir": "./web",
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "paths": {
+      "@/*": ["./web/*"],
+      "./assets/chervotain/*": ["./web/assets/chervotain/*"],
+    },
+    "sourceMap": false,
+    "declaration": false
+  },
+  "include": ["web/**/*.ts", "web/types/*.ts"],
+  "exclude": ["node_modules"]
+} 

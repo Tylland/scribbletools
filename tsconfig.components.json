@@ -1,0 +1,9 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "outFile": "./web/assets/components.js",
+    },
+    "include": ["web/components/**/*.ts", "web/types/*.ts"],
+    "exclude": ["node_modules"]
+}
+

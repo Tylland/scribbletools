@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": true, 
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": false,
+    "baseUrl": ".",
+    //"outFile": "./web/assets/chevrotain.js",
+    "outDir": "./web/assets/chevrotain",
+    "rootDir": "./node_modules",
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "paths": {
+      "@/*": ["./web/*"]
+    },
+    "sourceMap": false,
+    "declaration": false
+  },
+  "include": ["node_modules/chevrotain/**/*.ts"],
+} 
