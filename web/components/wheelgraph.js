@@ -45,6 +45,14 @@ export class WheelGraph extends ComponentBase {
                 this.draw();
             }
         };
+        this.download = () => {
+            if (this.canvas) {
+                var link = document.createElement('a');
+                link.download = 'wheel.png';
+                link.href = this.canvas.toDataURL();
+                link.click();
+            }
+        };
         this.draw = () => {
             const canvas = this.canvas; // document.getElementById("wcgraph") as HTMLCanvasElement;
             if (canvas) {
@@ -80,6 +88,8 @@ export class WheelGraph extends ComponentBase {
         }).observe(this.canvas);
         this.initializeChart();
         this.draw();
+        let downloadCanvas = this.dataQuery("downloadCanvas");
+        downloadCanvas.addEventListener("click", () => { self.download(); });
     }
     set width(value) {
         this.props.width = value;

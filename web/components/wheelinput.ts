@@ -49,6 +49,15 @@ export class WheelInput extends ComponentBase {
                 this.textarea.innerText = scribble
             }
         }
+
+        let dropdownButton = this.dataQuery("dropdown-button");
+
+        dropdownButton.addEventListener("click", (evt: Event) => {
+            let dropdown = this.dataQuery("dropdown");
+
+            dropdown.classList.toggle("hidden");
+
+        })
         
 
         this.loadText = this.loadText.bind(this);

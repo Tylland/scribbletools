@@ -80,6 +80,10 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
         this.initializeChart();
 
         this.draw();
+
+        let downloadCanvas = this.dataQuery("downloadCanvas")
+
+        downloadCanvas.addEventListener("click", () => {self.download();})
     }
 
     set width(value: number){
@@ -113,6 +117,15 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
             this.draw();
         }
     }
+
+    download  = (): void => {
+        if (this.canvas) {
+            var link = document.createElement('a');
+            link.download = 'wheel.png';
+            link.href = this.canvas.toDataURL()
+            link.click();
+        }
+      }
 
     invalidate(): void {
         window.requestAnimationFrame(this.draw);
