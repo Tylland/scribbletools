@@ -1,4 +1,4 @@
-import { Font } from "./Font.ts";
+import type { IFont } from "./Font.ts";
 import type { IDevice } from "./IDevice.ts";
 import type { IRect } from "./IRect.ts";
 import { Rect } from "./Rect.ts";
@@ -17,14 +17,14 @@ export class CanvasDevice implements IDevice {
         this.onInvalidated();
     }
 
-    measureText(text: string, font: Font): IRect {
+    measureText(text: string, font: IFont): IRect {
         this.ctx.font = this.getFont(font);
         var metrics = this.ctx.measureText(text);
 
         return Rect.create(0, metrics.actualBoundingBoxAscent, metrics.width, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
     }
 
-    getFont(font: Font): string {
-        return font.size + "px " + font.family;
+    getFont(font: IFont): string {
+        return font.getSize(this.viewport.width) + "px " + font.getFamily();
     }
 }

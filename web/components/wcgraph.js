@@ -11,6 +11,7 @@ import { Font } from "../libraries/wcgraph/Font";
 import { Brush } from "../libraries/wcgraph/Brush";
 import { Pen } from "../libraries/wcgraph/Pen";
 import { InnerHtml } from "./innerhtml.js";
+import { ViewportSize } from "@/libraries/wcgraph/ViewportSize.js";
 export class WcGraph extends HTMLCanvasElement {
     constructor() {
         super();
@@ -37,6 +38,17 @@ export class WcGraph extends HTMLCanvasElement {
         this.innerHTML = await InnerHtml.Import("/components/wcgraph.html");
     }
     measureText(_text, _font) {
+        throw new Error("Method not implemented.");
+    }
+    getViewportSize() {
+        let size;
+        for (size in ViewportSize) {
+            const value = ViewportSize[size];
+            if (this.viewport.width <= parseFloat(value)) {
+                //return value as ViewportSize;
+                return ViewportSize[size];
+            }
+        }
         throw new Error("Method not implemented.");
     }
     invalidate() {

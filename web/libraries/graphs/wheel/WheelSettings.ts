@@ -1,5 +1,8 @@
-﻿import { Brush } from "../../wcgraph/Brush.ts";
-import { Font } from "../../wcgraph/Font.ts";
+﻿import { ViewportSize } from "../../wcgraph/ViewportSize.ts";
+import { TailwindPalette } from "../../palette/TailwindPalette.ts";
+import { Brush } from "../../wcgraph/Brush.ts";
+import type { IFont } from "../../wcgraph/Font.ts";
+import  { ResponsiveFont, FontSize, Breakpoint } from "../../wcgraph/Font.ts";
 import { Margin } from "../../wcgraph/Margin.ts";
 import { Pen } from "../../wcgraph/Pen.ts";
 import { WcPointF } from "../../wcgraph/WcPointF.ts";
@@ -13,7 +16,7 @@ export class WheelSettings {
 
     public chartMargin: Margin = new Margin(0, 0, 0, 0);
 
-    public chartBackground: Brush = new Brush("#FFFFFF");
+    public chartBackground: Brush = new Brush(TailwindPalette.Gray50);
     public chartBorder: Pen = new Pen('#F8F8F8', 1)
 
     public wheelBackground: Brush = new Brush("#F8F8F8");
@@ -21,17 +24,18 @@ export class WheelSettings {
 
     public gridLine: Pen = new Pen('#BBBBBB', 1)
 
-    public titleFont: Font = new Font("Arial", 48);
+    public titleFont: IFont = new ResponsiveFont("Arial", FontSize.XL4, [new Breakpoint(ViewportSize.$md, FontSize.XL5), new Breakpoint(ViewportSize.$2xl, FontSize.XL8)]);
     public titleBrush: Brush = new Brush("#555555");
 
-    public labelHeight: number = 100;
+    public labelHeight: number = 60;
     public maxScore: number = 10;
 
     public labelOffset: number = 40;
-    public labelFont: Font = new Font("Arial", 24);
+    public labelFont: IFont = new ResponsiveFont("Arial", FontSize.SM, [new Breakpoint(ViewportSize.$md, FontSize.LG), new Breakpoint(ViewportSize.$2xl, FontSize.XL2)]);
     public labelBrush: Brush = new Brush("#333333");
 
-    public totalScoreFont: Font = new Font("Arial", 48);
+    //public totalScoreFont: IFont = new ResponsiveFont("Arial", FontSize.XL2, [new Breakpoint(ViewportSize.$md, FontSize.XL2), new Breakpoint(ViewportSize.$2xl, FontSize.XL2)]);
+    public totalScoreFont: IFont = new ResponsiveFont("Arial", FontSize.XL2);
     public totalScoreBrush: Brush = new Brush("#222222");
 
     public calcPoint(center: WcPointF, radius: number, angle: number): WcPointF {

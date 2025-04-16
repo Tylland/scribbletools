@@ -1,7 +1,7 @@
 import { Rect } from "./Rect.ts";
 import type { IRenderer } from "./IRenderer";import { Point } from "./Point.ts";
 import { Brush } from "./Brush.ts";
-import { Font } from "./Font.ts";
+import  { Font } from "./Font.ts";
 import { HorizontalAlignment } from "./HorizontalAlignment.ts";
 import { VerticalAlignment } from "./VerticalAlignment.ts";
 import { TextAlignment } from "./TextAlignment.ts";
@@ -20,12 +20,12 @@ export class CanvasRenderer implements IRenderer {
         this.ctx = <CanvasRenderingContext2D>canvas.getContext('2d');
     }
 
-    measureText(text: string, font: Font): IRect {
-        this.ctx.font = this.getFont(font);
-        let metrics = this.ctx.measureText(text);
+    // measureText(text: string, font: IFont): IRect {
+    //     this.ctx.font = this.getFont(font);
+    //     let metrics = this.ctx.measureText(text);
 
-        return Rect.create(0, metrics.actualBoundingBoxAscent, metrics.width, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
-    }
+    //     return Rect.create(0, metrics.actualBoundingBoxAscent, metrics.width, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
+    // }
 
     getTextAlign(horizontalAlignment: HorizontalAlignment): CanvasTextAlign {
         if (horizontalAlignment == HorizontalAlignment.Right)
@@ -49,7 +49,7 @@ export class CanvasRenderer implements IRenderer {
 
 
     getFont(font: Font): string {
-        return font.size + "px " + font.family;
+         return font.size + "px " + font.family;
     }
 
     drawText(text: string, location: Point, font: Font, fill: Brush, alignment: TextAlignment): void {
@@ -208,7 +208,6 @@ export class CanvasRenderer implements IRenderer {
         this.ctx.fillStyle = fillStyle;
         this.ctx.clearRect(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
         this.ctx.fillRect(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
-
     }
 
     debugPoint(point: Point): void {

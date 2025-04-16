@@ -6,3 +6,6 @@ Run in Terminal on Windows:
 
 scp C:\src\scribbletools\bin\linux\scribbletools-amd64-linux andreas-tyllsmark@192.168.2.36:/bin/scribbletools
 
+In Putty:
+
+systemctl start scribbletools.service

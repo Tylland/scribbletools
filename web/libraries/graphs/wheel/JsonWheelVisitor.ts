@@ -7,16 +7,22 @@ const BaseWheelVisitor = parserInstance.getBaseCstVisitorConstructor();
 
 interface IWheelNode {
     title: any;
-    categories: Array<any>;
+    categories: any;
+}
+
+interface ICategoriesNode {
+    category: Array<any>;
 }
 
 interface ICategoryNode {
-    StringLiteral: any;
-    Score: any;
+    QuotedText: any;
+    WordText: any;
+    NumberLiteral: any;
 }
 interface ITitleNode {
     Title: any;
-    StringLiteral: any;
+    QuotedText: any;
+    WordText: any;
 }
 
 export class JsonWheelVisitor extends BaseWheelVisitor {
@@ -31,12 +37,17 @@ export class JsonWheelVisitor extends BaseWheelVisitor {
 
     wheel(node: IWheelNode) {
 
-        const title = this.visit(node.title);
+        let title: string = ""
+
+        if (node.title != undefined) {
+            title = this.visit(node.title);
+        }
 
         let categories: Array<any> = [];
 
-        if (node.categories != undefined)
-            categories = node.categories.map(category => this.visit(category));
+         if (node.categories != undefined) {
+             categories = this.visit(node.categories);
+         }
 
         console.log('wheel');
 
@@ -49,25 +60,37 @@ export class JsonWheelVisitor extends BaseWheelVisitor {
     title(node: ITitleNode) {
         let title: string = '';
 
-        if (node.StringLiteral != undefined) {
-            title = node.StringLiteral[0].image;
+        if (node.QuotedText != undefined) {
+            title = node.QuotedText[0].image;
             title = title.substring(1, title.length - 1);
+        }
+
+        if (node.WordText != undefined) {
+            title = node.WordText[0].image;
         }
 
         return title;
     }
 
-    categories(node: ICategoryNode) {
+    categories(node: ICategoriesNode) {
+        return node.category.map(category => this.visit(category));
+    }
+
+    category(node: ICategoryNode) {
         let label: string = '';
         let score: number = 5;
 
-        if (node.StringLiteral != undefined) {
-            label = node.StringLiteral[0].image;
+        if (node.QuotedText != undefined) {
+            label = node.QuotedText[0].image;
             label = label.substring(1, label.length - 1);
         }
 
-        if (node.Score != undefined)
-            score = parseFloat(node.Score[0].image);
+        if (node.WordText != undefined) {
+            label = node.WordText[0].image;
+        }
+
+        if (node.NumberLiteral != undefined)
+            score = parseFloat(node.NumberLiteral[0].image);
 
         return {
             label: label,

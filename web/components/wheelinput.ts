@@ -1,8 +1,8 @@
-import { WheelLexer, WheelParser } from "../libraries/graphs/wheel/WheelParser.js";
-import { JsonWheelVisitor } from "../libraries/graphs/wheel/JsonWheelVisitor.js"
-//import { Wheel } from "../libraries/graphs/wheel/model/Wheel.js";
-import { InnerHtml } from "./innerhtml.js";
-import { ComponentBase } from "./base.js";
+import { WheelLexer, WheelParser } from "../libraries/graphs/wheel/WheelParser.ts";
+import { JsonWheelVisitor } from "../libraries/graphs/wheel/JsonWheelVisitor.ts"
+//import { Wheel } from "../libraries/graphs/wheel/model/Wheel.ts";
+import { InnerHtml } from "./innerhtml.ts";
+import { ComponentBase } from "./base.ts";
 
 
 export class WheelInput extends ComponentBase {

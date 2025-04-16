@@ -1,5 +1,7 @@
+import { ViewportSize } from "../../wcgraph/ViewportSize.js";
+import { TailwindPalette } from "../../palette/TailwindPalette.js";
 import { Brush } from "../../wcgraph/Brush.js";
-import { Font } from "../../wcgraph/Font.js";
+import { ResponsiveFont, FontSize, Breakpoint } from "../../wcgraph/Font.js";
 import { Margin } from "../../wcgraph/Margin.js";
 import { Pen } from "../../wcgraph/Pen.js";
 import { WcPointF } from "../../wcgraph/WcPointF.js";
@@ -10,19 +12,20 @@ export class WheelSettings {
         this.minRadius = 70;
         this.maxRadius = 400;
         this.chartMargin = new Margin(0, 0, 0, 0);
-        this.chartBackground = new Brush("#FFFFFF");
+        this.chartBackground = new Brush(TailwindPalette.Gray50);
         this.chartBorder = new Pen('#F8F8F8', 1);
         this.wheelBackground = new Brush("#F8F8F8");
         this.wheelBorder = new Pen('#BBBBBB', 1);
         this.gridLine = new Pen('#BBBBBB', 1);
-        this.titleFont = new Font("Arial", 48);
+        this.titleFont = new ResponsiveFont("Arial", FontSize.XL4, [new Breakpoint(ViewportSize.$md, FontSize.XL5), new Breakpoint(ViewportSize.$2xl, FontSize.XL8)]);
         this.titleBrush = new Brush("#555555");
-        this.labelHeight = 100;
+        this.labelHeight = 60;
         this.maxScore = 10;
         this.labelOffset = 40;
-        this.labelFont = new Font("Arial", 24);
+        this.labelFont = new ResponsiveFont("Arial", FontSize.SM, [new Breakpoint(ViewportSize.$md, FontSize.LG), new Breakpoint(ViewportSize.$2xl, FontSize.XL2)]);
         this.labelBrush = new Brush("#333333");
-        this.totalScoreFont = new Font("Arial", 48);
+        //public totalScoreFont: IFont = new ResponsiveFont("Arial", FontSize.XL2, [new Breakpoint(ViewportSize.$md, FontSize.XL2), new Breakpoint(ViewportSize.$2xl, FontSize.XL2)]);
+        this.totalScoreFont = new ResponsiveFont("Arial", FontSize.XL2);
         this.totalScoreBrush = new Brush("#222222");
     }
     calcPoint(center, radius, angle) {

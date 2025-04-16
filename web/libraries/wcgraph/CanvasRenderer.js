@@ -15,11 +15,11 @@ export class CanvasRenderer {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
     }
-    measureText(text, font) {
-        this.ctx.font = this.getFont(font);
-        let metrics = this.ctx.measureText(text);
-        return Rect.create(0, metrics.actualBoundingBoxAscent, metrics.width, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
-    }
+    // measureText(text: string, font: IFont): IRect {
+    //     this.ctx.font = this.getFont(font);
+    //     let metrics = this.ctx.measureText(text);
+    //     return Rect.create(0, metrics.actualBoundingBoxAscent, metrics.width, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
+    // }
     getTextAlign(horizontalAlignment) {
         if (horizontalAlignment == HorizontalAlignment.Right)
             return "right";

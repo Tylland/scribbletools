@@ -48,6 +48,6 @@ export class WcWheelSector extends WcFigure {
         renderer.drawPath(commands, this.brush, this.pen);
         const labelLocation = view.worldPointToDevice(this.settings.calcPoint(this.center, this.settings.maxRadius + this.settings.labelOffset, (this.startAngle + this.endAngle) / 2));
         const labelAngle = this.settings.calcTextAngle((this.startAngle + this.endAngle) / 2);
-        renderer.drawRotatedText(this.category.label, labelLocation, this.settings.labelFont, this.settings.labelBrush, TextAlignment.CenterMiddle, labelAngle);
+        renderer.drawRotatedText(this.category.label, labelLocation, this.settings.labelFont.toFont(view.device.viewport.width), this.settings.labelBrush, TextAlignment.CenterMiddle, labelAngle);
     }
 }

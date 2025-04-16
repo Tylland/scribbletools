@@ -57,8 +57,9 @@ export class WheelGraph extends ComponentBase {
             const canvas = this.canvas; // document.getElementById("wcgraph") as HTMLCanvasElement;
             if (canvas) {
                 const renderer = new CanvasRenderer(canvas);
-                let backgroundColor = window.getComputedStyle(this).backgroundColor;
-                renderer.clear(backgroundColor);
+                //          let backgroundColor = window.getComputedStyle(this).backgroundColor;
+                //            renderer.clear(backgroundColor)
+                renderer.clear(this.settings.chartBackground.style);
                 this.titleComponent?.draw(renderer);
                 this.wheelComponent?.draw(renderer);
             }
@@ -109,22 +110,27 @@ export class WheelGraph extends ComponentBase {
         return new WcComponent(name, device, world, view);
     }
     initializeChart() {
-        let backgroundColor = window.getComputedStyle(this).backgroundColor;
-        this.settings.chartBackground.style = backgroundColor;
+        let labelHeight = 0;
+        const hasLabel = this.wheel.title != undefined && this.wheel.title != "";
+        if (hasLabel) {
+            labelHeight = this.settings.labelHeight;
+            this.canvas.height = this.canvas.width + this.settings.labelHeight;
+        }
         const chartArea = new Rect(new Point(this.settings.chartMargin.left, this.settings.chartMargin.bottom), new Point(this.canvas.clientWidth - this.settings.chartMargin.right, this.canvas.clientHeight - this.settings.chartMargin.top));
-        const labelArea = new Rect(new Point(chartArea.x, chartArea.y), new Point(chartArea.x + chartArea.width, chartArea.y + this.settings.labelHeight));
-        const labelWorldBoundary = new WcRect(new WcPointF(0, 0), new WcPointF(1000, 200));
-        this.titleComponent = this.createComponent("Wheel", labelWorldBoundary, labelArea);
-        this.titleComponent.world.addFigure(new WcText('Wheel of Ultra', new WcPointF(500, 100), this.settings.titleFont, this.settings.titleBrush, TextAlignment.CenterMiddle));
-        //const graphArea: IRect = new Rect(new Point(chartArea.x, chartArea.y + this.settings.labelHeight),
-        //    new Point(chartArea.x + chartArea.width, chartArea.y + chartArea.height - this.settings.labelHeight));
-        const wheelCenter = chartArea.getCenter();
-        const wheelSize = Math.min(chartArea.width, chartArea.height);
+        if (hasLabel) {
+            const labelArea = new Rect(new Point(chartArea.x, chartArea.y), new Point(chartArea.x + chartArea.width, chartArea.y + labelHeight));
+            const labelWorldBoundary = new WcRect(new WcPointF(0, 0), new WcPointF(1000, 200));
+            this.titleComponent = this.createComponent("Title", labelWorldBoundary, labelArea);
+            this.titleComponent.world.addFigure(new WcText(this.wheel.title, new WcPointF(500, 100), this.settings.titleFont, this.settings.titleBrush, TextAlignment.CenterMiddle));
+        }
+        const graphArea = new Rect(new Point(chartArea.x, chartArea.y + labelHeight), new Point(chartArea.x + chartArea.width, chartArea.y + chartArea.height));
+        const wheelCenter = graphArea.getCenter();
+        const wheelSize = Math.min(graphArea.width, graphArea.height);
         const wheelArea = new Rect(new Point(wheelCenter.x - wheelSize / 2, wheelCenter.y - wheelSize / 2), new Point(wheelCenter.x + wheelSize / 2, wheelCenter.y + wheelSize / 2));
         const wheelWorldBoundary = new WcRect(new WcPointF(0, 0), new WcPointF(1000, 1000));
         this.wheelComponent = this.createComponent("Wheel", wheelWorldBoundary, wheelArea);
         this.wheelComponent.world.addFigure(new WcRectangle(wheelWorldBoundary, this.settings.chartBackground, this.settings.chartBorder));
-        this.wheelComponent.world.addFigure(new WcText(this.wheel.title, new WcPointF(0, 1000), this.settings.titleFont, this.settings.titleBrush, TextAlignment.LeftBottom));
+        //this.wheelComponent.world.addFigure(new WcText(this.wheel.title, new WcPointF(100, 900), this.settings.titleFont, this.settings.titleBrush, TextAlignment.LeftBottom));
         this.wheelComponent.world.addFigure(new WcWheelGrid(new WcPointF(500, 500), this.wheel.categories, this.settings));
         const palette = new TangoPalette();
         const sectorAngle = 2 * Math.PI / this.wheel.categories.length;

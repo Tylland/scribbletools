@@ -25,16 +25,16 @@ import { ComponentBase } from "./base.ts";
 
 
 class WheelGraphProps {
-        constructor(public width: number, public height: number){}
+    constructor(public width: number, public height: number) { }
 }
 
 export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable {
     private settings: WheelSettings = new WheelSettings();
     private props: WheelGraphProps;
-    private titleComponent?: WcComponent; 
+    private titleComponent?: WcComponent;
     private wheelComponent?: WcComponent;
     private wheel: Wheel = { title: '', categories: [] };
-    
+
     private canvas!: HTMLCanvasElement;
 
     constructor() {
@@ -64,7 +64,7 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
 
         new ResizeObserver(entries => {
 
-            if(entries.length > 0){
+            if (entries.length > 0) {
                 let { width } = entries[0].contentRect;
 
                 this.canvas.width = width
@@ -72,7 +72,7 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
 
                 self.initializeChart();
                 self.invalidate();
-                }
+            }
 
         }).observe(this.canvas);
 
@@ -83,14 +83,14 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
 
         let downloadCanvas = this.dataQuery("downloadCanvas")
 
-        downloadCanvas.addEventListener("click", () => {self.download();})
+        downloadCanvas.addEventListener("click", () => { self.download(); })
     }
 
-    set width(value: number){
+    set width(value: number) {
         this.props.width = value
     }
 
-    set height(value: number){
+    set height(value: number) {
         this.props.height = value
     }
 
@@ -118,14 +118,14 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
         }
     }
 
-    download  = (): void => {
+    download = (): void => {
         if (this.canvas) {
             var link = document.createElement('a');
             link.download = 'wheel.png';
             link.href = this.canvas.toDataURL()
             link.click();
         }
-      }
+    }
 
     invalidate(): void {
         window.requestAnimationFrame(this.draw);
@@ -137,9 +137,10 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
         if (canvas) {
             const renderer = new CanvasRenderer(canvas as HTMLCanvasElement);
 
-            let backgroundColor = window.getComputedStyle(this).backgroundColor;
+            //          let backgroundColor = window.getComputedStyle(this).backgroundColor;
 
-            renderer.clear(backgroundColor)
+            //            renderer.clear(backgroundColor)
+            renderer.clear(this.settings.chartBackground.style)
 
             this.titleComponent?.draw(renderer);
             this.wheelComponent?.draw(renderer);
@@ -160,30 +161,37 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
     }
 
     initializeChart(): void {
+        let labelHeight = 0;
 
-        let backgroundColor = window.getComputedStyle(this).backgroundColor;
+        const hasLabel = this.wheel.title != undefined && this.wheel.title != "";
 
-        this.settings.chartBackground.style = backgroundColor
+        if (hasLabel) {
+            labelHeight = this.settings.labelHeight;
+
+            this.canvas.height = this.canvas.width + this.settings.labelHeight;
+        }
 
         const chartArea: IRect = new Rect(
             new Point(this.settings.chartMargin.left, this.settings.chartMargin.bottom),
             new Point(this.canvas.clientWidth - this.settings.chartMargin.right, this.canvas.clientHeight - this.settings.chartMargin.top));
 
-        const labelArea: IRect = new Rect(new Point(chartArea.x, chartArea.y),
-            new Point(chartArea.x + chartArea.width, chartArea.y + this.settings.labelHeight));
 
-        const labelWorldBoundary: WcRect = new WcRect(new WcPointF(0, 0), new WcPointF(1000, 200));
+        if (hasLabel) {
+            const labelArea: IRect = new Rect(new Point(chartArea.x, chartArea.y),
+                new Point(chartArea.x + chartArea.width, chartArea.y + labelHeight));
 
-        this.titleComponent = this.createComponent("Wheel", labelWorldBoundary, labelArea)
+            const labelWorldBoundary: WcRect = new WcRect(new WcPointF(0, 0), new WcPointF(1000, 200));
 
-        this.titleComponent.world.addFigure(new WcText('Wheel of Ultra', new WcPointF(500, 100), this.settings.titleFont, this.settings.titleBrush, TextAlignment.CenterMiddle))
+            this.titleComponent = this.createComponent("Title", labelWorldBoundary, labelArea)
+            this.titleComponent.world.addFigure(new WcText(this.wheel.title, new WcPointF(500, 100), this.settings.titleFont, this.settings.titleBrush, TextAlignment.CenterMiddle))
+        }
 
-        //const graphArea: IRect = new Rect(new Point(chartArea.x, chartArea.y + this.settings.labelHeight),
-        //    new Point(chartArea.x + chartArea.width, chartArea.y + chartArea.height - this.settings.labelHeight));
+        const graphArea: IRect = new Rect(new Point(chartArea.x, chartArea.y + labelHeight),
+            new Point(chartArea.x + chartArea.width, chartArea.y + chartArea.height));
 
 
-        const wheelCenter: Point = chartArea.getCenter();
-        const wheelSize: number = Math.min(chartArea.width, chartArea.height);  
+        const wheelCenter: Point = graphArea.getCenter();
+        const wheelSize: number = Math.min(graphArea.width, graphArea.height);
 
         const wheelArea: IRect = new Rect(new Point(wheelCenter.x - wheelSize / 2, wheelCenter.y - wheelSize / 2),
             new Point(wheelCenter.x + wheelSize / 2, wheelCenter.y + wheelSize / 2));
@@ -194,7 +202,7 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
 
 
         this.wheelComponent.world.addFigure(new WcRectangle(wheelWorldBoundary, this.settings.chartBackground, this.settings.chartBorder));
-        this.wheelComponent.world.addFigure(new WcText(this.wheel.title, new WcPointF(0, 1000), this.settings.titleFont, this.settings.titleBrush, TextAlignment.LeftBottom));
+        //this.wheelComponent.world.addFigure(new WcText(this.wheel.title, new WcPointF(100, 900), this.settings.titleFont, this.settings.titleBrush, TextAlignment.LeftBottom));
         this.wheelComponent.world.addFigure(new WcWheelGrid(new WcPointF(500, 500), this.wheel.categories, this.settings));
 
 
@@ -202,7 +210,8 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
 
         const sectorAngle: number = 2 * Math.PI / this.wheel.categories.length;
         let sectorCount: number = 0;
-        
+
+
         this.wheel.categories.forEach(category => {
             if (this.wheelComponent) {
                 this.wheelComponent.world.addFigure(new WcWheelSector(new WcPointF(500, 500), this.settings.calcAngle(sectorCount, sectorAngle), this.settings.calcAngle(sectorCount + 1, sectorAngle), category, palette.getColor(sectorCount), this.settings));
@@ -215,4 +224,4 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
 
 customElements.define('wheel-graph', WheelGraph);
 
- 
+

@@ -1,4 +1,3 @@
-import { Font } from "./Font.js";
 import { Rect } from "./Rect.js";
 export class CanvasDevice {
     constructor(canvas, viewport) {
@@ -15,6 +14,6 @@ export class CanvasDevice {
         return Rect.create(0, metrics.actualBoundingBoxAscent, metrics.width, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
     }
     getFont(font) {
-        return font.size + "px " + font.family;
+        return font.getSize(this.viewport.width) + "px " + font.getFamily();
     }
 }

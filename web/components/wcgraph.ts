@@ -13,6 +13,7 @@ import { Font } from "../libraries/wcgraph/Font";
 import { Brush } from "../libraries/wcgraph/Brush";
 import { Pen } from "../libraries/wcgraph/Pen";
 import { InnerHtml } from "./innerhtml.js";
+import { ViewportSize } from "@/libraries/wcgraph/ViewportSize.js";
 
 type WcGraphProps = {
     width: number;
@@ -51,7 +52,25 @@ export class WcGraph extends HTMLCanvasElement implements IDevice {
         throw new Error("Method not implemented.");
     }
 
+
+
     viewport: IRect;
+
+    
+    getViewportSize(): ViewportSize {
+
+        let size: keyof typeof ViewportSize;
+        for (size in ViewportSize) {
+            const value = ViewportSize[size];
+
+            if(this.viewport.width <= parseFloat(value)){
+                //return value as ViewportSize;
+                return  ViewportSize[size as unknown as keyof typeof ViewportSize] as ViewportSize
+            }
+        }
+
+        throw new Error("Method not implemented.");
+    }
 
    
 

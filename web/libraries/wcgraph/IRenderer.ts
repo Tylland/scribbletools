@@ -16,6 +16,6 @@ export interface IRenderer {
     drawText(text: string, location: Point, font: Font, fill: Brush, alignment: TextAlignment): void;
     drawRotatedText(text: string, location: Point, font: Font, fill: Brush, alignment: TextAlignment, angle: number): void;
     drawPath(commands: IDrawCommand[], fill: Brush, stroke: Pen): void;
-    measureText(text: string, font: Font): IRect;
+    //measureText(text: string, font: IFont): IRect;
     debugPoint(point: Point): void;
 }

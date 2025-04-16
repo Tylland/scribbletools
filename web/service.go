@@ -20,7 +20,7 @@ var indexHTML embed.FS
 //go:embed components/*
 var components embed.FS
 
-//go:embed libraries/*
+//go:embed libraries/**/*
 var libraries embed.FS
 
 func StartServer() {

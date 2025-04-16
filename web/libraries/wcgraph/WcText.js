@@ -1,5 +1,4 @@
 import { Brush } from "./Brush.js";
-import { Font } from "./Font.js";
 import { TextAlignment } from "./TextAlignment.js";
 import { WcFigure } from "./WcFigure.js";
 export class WcText extends WcFigure {
@@ -13,6 +12,8 @@ export class WcText extends WcFigure {
     }
     draw(renderer, view) {
         const devicePoint = view.worldPointToDevice(this.location);
-        renderer.drawText(this.text, devicePoint, this.font, this.fill, this.alignment);
+        const v = view.window;
+        renderer.debugPoint(devicePoint);
+        renderer.drawText(this.text, devicePoint, this.font.toFont(view.device.viewport.width), this.fill, this.alignment);
     }
 }

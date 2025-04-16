@@ -56,7 +56,7 @@ export class WcWheelGrid extends WcFigure {
 
         const scoreRect = view.worldRectToDevice(WcRect.fromCenter(this.center, this.settings.minRadius * 2, this.settings.minRadius * 2));
 
-        renderer.drawText(totalScore.toString(), scoreRect.getCenter(), this.settings.totalScoreFont, this.settings.totalScoreBrush, TextAlignment.CenterMiddle);
+        renderer.drawText(totalScore.toString(), scoreRect.getCenter(), this.settings.totalScoreFont.toFont(view.device.viewport.width), this.settings.totalScoreBrush, TextAlignment.CenterMiddle);
 
     }
 }
