@@ -9,7 +9,7 @@ export class WheelInput extends ComponentBase {
         super.InitComponent(this);
         this.parser = new WheelParser();
     }
-    dataQuery(name) {
+    dataComponent(name) {
         let element = this.querySelector('[data-component="' + name + '"]');
         if (element == null) {
             throw new Error("data-component wtih value '" + name + "' is not found but required");
@@ -18,7 +18,7 @@ export class WheelInput extends ComponentBase {
     }
     async connectedCallback() {
         this.innerHTML = await InnerHtml.Import("/components/wheelinput.html");
-        this.textarea = this.dataQuery("wheelInput");
+        this.textarea = this.dataComponent("wheelInput");
         this.textarea.addEventListener("input", (evt) => {
             this.loadText(this.textarea?.innerText ?? "");
         });
@@ -31,10 +31,17 @@ export class WheelInput extends ComponentBase {
                 this.textarea.innerText = scribble;
             }
         }
-        let dropdownButton = this.dataQuery("dropdown-button");
+        let dropdownButton = this.dataComponent("dropdown-button");
+        let dropdown = this.dataComponent("dropdown");
         dropdownButton.addEventListener("click", (evt) => {
-            let dropdown = this.dataQuery("dropdown");
             dropdown.classList.toggle("hidden");
+            evt.stopPropagation();
+        });
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!dropdown.contains(event.target) && !dropdown.classList.contains('hidden')) {
+                dropdown.classList.add('hidden');
+            }
         });
         this.loadText = this.loadText.bind(this);
         this.loadInput(scribble);

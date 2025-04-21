@@ -31,7 +31,7 @@ class WheelGraphProps {
 export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable {
     private settings: WheelSettings = new WheelSettings();
     private props: WheelGraphProps;
-    private titleComponent?: WcComponent;
+    private titleComponent?: WcComponent | null;
     private wheelComponent?: WcComponent;
     private wheel: Wheel = { title: '', categories: [] };
 
@@ -56,7 +56,7 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
         let self = this;
         this.innerHTML = await InnerHtml.Import("/components/wheelgraph.html")
 
-        this.canvas = this.dataQuery<HTMLCanvasElement>("wheelCanvas");
+        this.canvas = this.dataComponent<HTMLCanvasElement>("wheelCanvas");
 
         this.canvas.onresize = function (evt: UIEvent) {
             self.invalidate();
@@ -81,10 +81,46 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
 
         this.draw();
 
-        let downloadCanvas = this.dataQuery("downloadCanvas")
+        // let downloadCanvas = this.dataQuery("downloadCanvas")
 
-        downloadCanvas.addEventListener("click", () => { self.download(); })
+        // downloadCanvas.addEventListener("click", () => { self.download(); })
+    
+        
+
+        let dropdownButton = this.dataComponent("dropdown-button");
+
+        let dropdown = this.dataComponent("dropdown") as HTMLDivElement;
+
+        dropdownButton.addEventListener("click", (evt: Event) => {
+            dropdown.classList.toggle("hidden");
+            evt.stopPropagation();
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event: MouseEvent) => {
+            if (!dropdown.contains(event.target as Node) && !dropdown.classList.contains('hidden')) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        let downloadPNG = dropdown.querySelector('[data-component="downloadPNG"]');
+        
+        downloadPNG?.addEventListener("click", (evt)=>{
+            this.download("png");
+            dropdown.classList.add('hidden');
+        });
+
+
+        let downloadJPG = dropdown.querySelector('[data-component="downloadJPG"]');
+
+        downloadJPG?.addEventListener("click", (evt)=>{
+            this.download("jpg");
+            dropdown.classList.add('hidden');
+        });
+
     }
+
+
 
     set width(value: number) {
         this.props.width = value
@@ -118,11 +154,11 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
         }
     }
 
-    download = (): void => {
+    download = (imageType:string): void => {
         if (this.canvas) {
             var link = document.createElement('a');
-            link.download = 'wheel.png';
-            link.href = this.canvas.toDataURL()
+            link.download = 'wheel.' + imageType;
+            link.href = this.canvas.toDataURL(imageType)
             link.click();
         }
     }
@@ -184,7 +220,10 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
 
             this.titleComponent = this.createComponent("Title", labelWorldBoundary, labelArea)
             this.titleComponent.world.addFigure(new WcText(this.wheel.title, new WcPointF(500, 100), this.settings.titleFont, this.settings.titleBrush, TextAlignment.CenterMiddle))
+        } else {
+            this.titleComponent = null
         }
+
 
         const graphArea: IRect = new Rect(new Point(chartArea.x, chartArea.y + labelHeight),
             new Point(chartArea.x + chartArea.width, chartArea.y + chartArea.height));

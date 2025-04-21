@@ -13,7 +13,6 @@ export class WcText extends WcFigure {
     draw(renderer, view) {
         const devicePoint = view.worldPointToDevice(this.location);
         const v = view.window;
-        renderer.debugPoint(devicePoint);
         renderer.drawText(this.text, devicePoint, this.font.toFont(view.device.viewport.width), this.fill, this.alignment);
     }
 }

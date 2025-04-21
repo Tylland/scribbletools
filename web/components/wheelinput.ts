@@ -16,7 +16,7 @@ export class WheelInput extends ComponentBase {
         this.parser = new WheelParser();
     }
 
-    dataQuery<E extends Element = Element>(name: string):E {
+    dataComponent<E extends Element = Element>(name: string):E {
         let element = this.querySelector<E>('[data-component="' + name + '"]')
 
         if(element == null){
@@ -29,7 +29,7 @@ export class WheelInput extends ComponentBase {
     async connectedCallback(){
         this.innerHTML = await InnerHtml.Import("/components/wheelinput.html");
 
-        this.textarea = this.dataQuery<HTMLDivElement>("wheelInput")
+        this.textarea = this.dataComponent<HTMLDivElement>("wheelInput")
 
         this.textarea.addEventListener("input", (evt:Event) => {
             this.loadText(this.textarea?.innerText ?? "")
@@ -50,15 +50,20 @@ export class WheelInput extends ComponentBase {
             }
         }
 
-        let dropdownButton = this.dataQuery("dropdown-button");
+        let dropdownButton = this.dataComponent("dropdown-button");
+        let dropdown = this.dataComponent("dropdown");
 
         dropdownButton.addEventListener("click", (evt: Event) => {
-            let dropdown = this.dataQuery("dropdown");
-
             dropdown.classList.toggle("hidden");
-
+            evt.stopPropagation();
         })
         
+         // Close dropdown when clicking outside
+         document.addEventListener('click', (event: MouseEvent) => {
+            if (!dropdown.contains(event.target as Node) && !dropdown.classList.contains('hidden')) {
+                dropdown.classList.add('hidden');
+            }
+        });
 
         this.loadText = this.loadText.bind(this);
 

@@ -56,6 +56,21 @@
                 "isDefault": true
             },
             "label": "tsc: build"
-        }
+        },
+        {
+            "label": "Run Tailwind CLI",
+            "type": "shell",
+            "command": "tailwindcss",
+            "args": [
+              "-i", "./web/input.css",
+              "-o", "./web/assets/css/scribbletools.css",
+              "--watch"
+            ],
+            "group": {
+              "kind": "build",
+              "isDefault": true
+            },
+            "problemMatcher": []
+          }
     ]
 }

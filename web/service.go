@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-//go:embed assets/*
+//go:embed assets/**/*
 var assets embed.FS
 
 //go:embed index.html

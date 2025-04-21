@@ -45,11 +45,11 @@ export class WheelGraph extends ComponentBase {
                 this.draw();
             }
         };
-        this.download = () => {
+        this.download = (imageType) => {
             if (this.canvas) {
                 var link = document.createElement('a');
-                link.download = 'wheel.png';
-                link.href = this.canvas.toDataURL();
+                link.download = 'wheel.' + imageType;
+                link.href = this.canvas.toDataURL(imageType);
                 link.click();
             }
         };
@@ -74,7 +74,7 @@ export class WheelGraph extends ComponentBase {
     async connectedCallback() {
         let self = this;
         this.innerHTML = await InnerHtml.Import("/components/wheelgraph.html");
-        this.canvas = this.dataQuery("wheelCanvas");
+        this.canvas = this.dataComponent("wheelCanvas");
         this.canvas.onresize = function (evt) {
             self.invalidate();
         };
@@ -89,8 +89,30 @@ export class WheelGraph extends ComponentBase {
         }).observe(this.canvas);
         this.initializeChart();
         this.draw();
-        let downloadCanvas = this.dataQuery("downloadCanvas");
-        downloadCanvas.addEventListener("click", () => { self.download(); });
+        // let downloadCanvas = this.dataQuery("downloadCanvas")
+        // downloadCanvas.addEventListener("click", () => { self.download(); })
+        let dropdownButton = this.dataComponent("dropdown-button");
+        let dropdown = this.dataComponent("dropdown");
+        dropdownButton.addEventListener("click", (evt) => {
+            dropdown.classList.toggle("hidden");
+            evt.stopPropagation();
+        });
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!dropdown.contains(event.target) && !dropdown.classList.contains('hidden')) {
+                dropdown.classList.add('hidden');
+            }
+        });
+        let downloadPNG = dropdown.querySelector('[data-component="downloadPNG"]');
+        downloadPNG?.addEventListener("click", (evt) => {
+            this.download("png");
+            dropdown.classList.add('hidden');
+        });
+        let downloadJPG = dropdown.querySelector('[data-component="downloadJPG"]');
+        downloadJPG?.addEventListener("click", (evt) => {
+            this.download("jpg");
+            dropdown.classList.add('hidden');
+        });
     }
     set width(value) {
         this.props.width = value;
@@ -122,6 +144,9 @@ export class WheelGraph extends ComponentBase {
             const labelWorldBoundary = new WcRect(new WcPointF(0, 0), new WcPointF(1000, 200));
             this.titleComponent = this.createComponent("Title", labelWorldBoundary, labelArea);
             this.titleComponent.world.addFigure(new WcText(this.wheel.title, new WcPointF(500, 100), this.settings.titleFont, this.settings.titleBrush, TextAlignment.CenterMiddle));
+        }
+        else {
+            this.titleComponent = null;
         }
         const graphArea = new Rect(new Point(chartArea.x, chartArea.y + labelHeight), new Point(chartArea.x + chartArea.width, chartArea.y + chartArea.height));
         const wheelCenter = graphArea.getCenter();

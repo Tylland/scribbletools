@@ -11,7 +11,7 @@ export class ComponentBase extends HTMLElement {
         this.target = component as EventTarget
     }
 
-    protected dataQuery<E extends Element = Element>(name: string):E {
+    protected dataComponent<E extends Element = Element>(name: string):E {
         if(this.parent == null){
             throw new Error("parent property is not initiated")
         } 
@@ -23,6 +23,10 @@ export class ComponentBase extends HTMLElement {
         } 
 
         return element 
+    }
+
+    protected on(name: string, eventName: string, listener: EventListenerOrEventListenerObject):void {
+        this.dataComponent(name).addEventListener(eventName, listener);
     }
 
     protected emitEvent(name: string, detail: any) {

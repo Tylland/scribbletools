@@ -6,7 +6,7 @@ export class ComponentBase extends HTMLElement {
         this.parent = component;
         this.target = component;
     }
-    dataQuery(name) {
+    dataComponent(name) {
         if (this.parent == null) {
             throw new Error("parent property is not initiated");
         }
@@ -15,6 +15,9 @@ export class ComponentBase extends HTMLElement {
             throw new Error("data-component wtih value '" + name + "' is not found but required");
         }
         return element;
+    }
+    on(name, eventName, listener) {
+        this.dataComponent(name).addEventListener(eventName, listener);
     }
     emitEvent(name, detail) {
         const event = new CustomEvent(name, {

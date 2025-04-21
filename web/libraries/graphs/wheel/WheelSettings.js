@@ -22,7 +22,7 @@ export class WheelSettings {
         this.labelHeight = 60;
         this.maxScore = 10;
         this.labelOffset = 40;
-        this.labelFont = new ResponsiveFont("Arial", FontSize.SM, [new Breakpoint(ViewportSize.$md, FontSize.LG), new Breakpoint(ViewportSize.$2xl, FontSize.XL2)]);
+        this.labelFont = new ResponsiveFont("Arial", FontSize.MD, [new Breakpoint(ViewportSize.$md, FontSize.LG), new Breakpoint(ViewportSize.$2xl, FontSize.XL2)]);
         this.labelBrush = new Brush("#333333");
         //public totalScoreFont: IFont = new ResponsiveFont("Arial", FontSize.XL2, [new Breakpoint(ViewportSize.$md, FontSize.XL2), new Breakpoint(ViewportSize.$2xl, FontSize.XL2)]);
         this.totalScoreFont = new ResponsiveFont("Arial", FontSize.XL2);

@@ -31,7 +31,7 @@ export class WheelSettings {
     public maxScore: number = 10;
 
     public labelOffset: number = 40;
-    public labelFont: IFont = new ResponsiveFont("Arial", FontSize.SM, [new Breakpoint(ViewportSize.$md, FontSize.LG), new Breakpoint(ViewportSize.$2xl, FontSize.XL2)]);
+    public labelFont: IFont = new ResponsiveFont("Arial", FontSize.MD, [new Breakpoint(ViewportSize.$md, FontSize.LG), new Breakpoint(ViewportSize.$2xl, FontSize.XL2)]);
     public labelBrush: Brush = new Brush("#333333");
 
     //public totalScoreFont: IFont = new ResponsiveFont("Arial", FontSize.XL2, [new Breakpoint(ViewportSize.$md, FontSize.XL2), new Breakpoint(ViewportSize.$2xl, FontSize.XL2)]);
