@@ -57,6 +57,7 @@ func StartServer() {
 
 	mux.Handle("/assets/js/", AssetImportServer("/assets/", "assets", "application/javascript", http.FS(assets)))
 	mux.Handle("/assets/css/", AssetImportServer("/assets/", "assets", "text/css", http.FS(assets)))
+	mux.Handle("/assets/", AssetImportServer("/assets/", "assets", "", http.FS(assets)))
 
 	mux.Handle("/libraries/", http.StripPrefix("/", &DebugHandler{fs: libraries}))
 	mux.Handle("/components/", http.StripPrefix("/", http.FileServer(http.FS(components))))
@@ -114,7 +115,13 @@ func (h *assetImportHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", h.mimeType)
+	mimeType := h.mimeType
+
+	if mimeType == "" {
+		mimeType = h.getMimeType(filename)
+	}
+
+	w.Header().Set("Content-Type", mimeType)
 
 	w.Write(content)
 }
