@@ -13,7 +13,7 @@ import type { IJsonLoadable } from "../libraries/utils/IJsonLoadable.ts";
 import { WcComponent } from "../libraries/wcgraph/WcComponent.ts";
 import { CanvasDevice } from "../libraries/wcgraph/CanvasDevice.ts";
 import { WcWheelGrid } from "../libraries/graphs/wheel/WcWheelGrid.ts";
-import { WheelSettings } from "../libraries/graphs/wheel/WheelSettings.ts";
+import { WheelSettings, DarkWheelSettings } from "../libraries/graphs/wheel/WheelSettings.ts";
 import { WcWheelSector } from "../libraries/graphs/wheel/WcWheelSector.ts";
 import { WcWindowsCoordinateSystem } from "../libraries/wcgraph/WcWindowsCoordinateSystem.ts";
 import { TangoPalette } from "../libraries/palette/TangoPalette.ts";
@@ -29,7 +29,7 @@ class WheelGraphProps {
 }
 
 export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable {
-    private settings: WheelSettings = new WheelSettings();
+    private settings: WheelSettings;
     private props: WheelGraphProps;
     private titleComponent?: WcComponent | null;
     private wheelComponent?: WcComponent;
@@ -42,6 +42,12 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
         super.InitComponent(this);
 
         this.props = new WheelGraphProps(800, 800);
+
+        if(this.isDarkMode()){
+            this.settings = new DarkWheelSettings();
+        } else {
+            this.settings = new WheelSettings();
+        }
 
         this.viewport = new Rect(new Point(0, 0), new Point(this.props.width, this.props.height))
     }
@@ -196,8 +202,15 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
         return new WcComponent(name, device, world, view);
     }
 
+    // Check if the device is in dark mode
+    isDarkMode = () => {
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    };
+
     initializeChart(): void {
         let labelHeight = 0;
+
+        let dark = this.isDarkMode();
 
         const hasLabel = this.wheel.title != undefined && this.wheel.title != "";
 
@@ -242,8 +255,6 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
 
         this.wheelComponent.world.addFigure(new WcRectangle(wheelWorldBoundary, this.settings.chartBackground, this.settings.chartBorder));
         //this.wheelComponent.world.addFigure(new WcText(this.wheel.title, new WcPointF(100, 900), this.settings.titleFont, this.settings.titleBrush, TextAlignment.LeftBottom));
-        this.wheelComponent.world.addFigure(new WcWheelGrid(new WcPointF(500, 500), this.wheel.categories, this.settings));
-
 
         const palette: TangoPalette = new TangoPalette();
 
@@ -253,11 +264,12 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
 
         this.wheel.categories.forEach(category => {
             if (this.wheelComponent) {
-                this.wheelComponent.world.addFigure(new WcWheelSector(new WcPointF(500, 500), this.settings.calcAngle(sectorCount, sectorAngle), this.settings.calcAngle(sectorCount + 1, sectorAngle), category, palette.getColor(sectorCount), this.settings));
+                this.wheelComponent.world.addFigure(new WcWheelSector(new WcPointF(500, 500), this.settings.calcAngle(sectorCount, sectorAngle), this.settings.calcAngle(sectorCount + 1, sectorAngle), category, palette.getColor(sectorCount), this.settings, dark));
                 sectorCount++;
             }
         });
 
+        this.wheelComponent.world.addFigure(new WcWheelGrid(new WcPointF(500, 500), this.wheel.categories, this.settings));
     }
 }
 

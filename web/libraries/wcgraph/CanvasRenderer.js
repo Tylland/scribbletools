@@ -150,9 +150,11 @@ export class CanvasRenderer {
         }
     }
     clear(fillStyle) {
+        this.ctx.imageSmoothingEnabled = false;
         this.ctx.fillStyle = fillStyle;
         this.ctx.clearRect(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
         this.ctx.fillRect(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
+        this.ctx.imageSmoothingEnabled = true;
     }
     debugPoint(point) {
         const size = 10;

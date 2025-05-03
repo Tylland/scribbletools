@@ -17,11 +17,16 @@ import { TextAlignment } from "../../wcgraph/TextAlignment.ts";
 export class WcWheelSector extends WcFigure {
     private brush: Brush;
     private pen: Pen;
-    constructor(private center: WcPointF, private startAngle: number, private endAngle: number, private category: Category, color: ColorInfo, private settings: WheelSettings) {
+    constructor(private center: WcPointF, private startAngle: number, private endAngle: number, private category: Category, color: ColorInfo, private settings: WheelSettings, dark: boolean) {
         super();
 
-        this.brush = new Brush(color.mediumHex);
-        this.pen = new Pen(color.darkHex, 1);
+        if(dark) {
+            this.brush = new Brush(color.lightHex);
+            this.pen = new Pen(color.mediumHex, 1);
+        } else {
+            this.brush = new Brush(color.mediumHex);
+            this.pen = new Pen(color.darkHex, 1);
+        }
     }
 
     //drawLine(renderer: IRenderer, view: IWcView, startX: number, startY: number, endX: number, endY: number): void {

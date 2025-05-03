@@ -16,7 +16,7 @@ export class WheelSettings {
         this.chartBorder = new Pen('#F8F8F8', 1);
         this.wheelBackground = new Brush("#F8F8F8");
         this.wheelBorder = new Pen('#BBBBBB', 1);
-        this.gridLine = new Pen('#BBBBBB', 1);
+        this.gridLine = new Pen(TailwindPalette.Gray400, 1);
         this.titleFont = new ResponsiveFont("Arial", FontSize.XL4, [new Breakpoint(ViewportSize.$md, FontSize.XL5), new Breakpoint(ViewportSize.$2xl, FontSize.XL8)]);
         this.titleBrush = new Brush("#555555");
         this.labelHeight = 60;
@@ -25,7 +25,7 @@ export class WheelSettings {
         this.labelFont = new ResponsiveFont("Arial", FontSize.MD, [new Breakpoint(ViewportSize.$md, FontSize.LG), new Breakpoint(ViewportSize.$2xl, FontSize.XL2)]);
         this.labelBrush = new Brush("#333333");
         //public totalScoreFont: IFont = new ResponsiveFont("Arial", FontSize.XL2, [new Breakpoint(ViewportSize.$md, FontSize.XL2), new Breakpoint(ViewportSize.$2xl, FontSize.XL2)]);
-        this.totalScoreFont = new ResponsiveFont("Arial", FontSize.XL2);
+        this.totalScoreFont = new ResponsiveFont("Arial", FontSize.XL3);
         this.totalScoreBrush = new Brush("#222222");
     }
     calcPoint(center, radius, angle) {
@@ -44,5 +44,17 @@ export class WheelSettings {
             return 0.5 * Math.PI + angle;
         }
         return 1.5 * Math.PI + angle;
+    }
+}
+export class DarkWheelSettings extends WheelSettings {
+    constructor() {
+        super();
+        this.chartBackground.style = TailwindPalette.Gray700;
+        this.chartBorder.style = TailwindPalette.Gray700;
+        this.wheelBackground.style = TailwindPalette.Gray700;
+        this.gridLine.style = TailwindPalette.Gray500;
+        this.titleBrush.style = TailwindPalette.Gray300;
+        this.labelBrush.style = TailwindPalette.Gray300;
+        this.totalScoreBrush.style = TailwindPalette.Gray300;
     }
 }

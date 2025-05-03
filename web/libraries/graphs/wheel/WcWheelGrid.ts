@@ -23,7 +23,7 @@ export class WcWheelGrid extends WcFigure {
 
         const backgroundRect = view.worldRectToDevice(WcRect.fromCenter(this.center, this.settings.maxRadius * 2, this.settings.maxRadius * 2));
 
-        renderer.drawEllipse(backgroundRect, this.settings.wheelBackground, Pen.none);
+//        renderer.drawEllipse(backgroundRect, this.settings.wheelBackground, Pen.none);
 
 
         for (let step: number = 0; step <= steps; step++) {

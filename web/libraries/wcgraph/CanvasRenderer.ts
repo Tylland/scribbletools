@@ -205,9 +205,11 @@ export class CanvasRenderer implements IRenderer {
     }
 
     clear(fillStyle: string) {
+        this.ctx.imageSmoothingEnabled = false;
         this.ctx.fillStyle = fillStyle;
         this.ctx.clearRect(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
         this.ctx.fillRect(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
+        this.ctx.imageSmoothingEnabled = true;
     }
 
     debugPoint(point: Point): void {

@@ -10,7 +10,7 @@ import { Font } from "../libraries/wcgraph/Font.js";
 import { WcComponent } from "../libraries/wcgraph/WcComponent.js";
 import { CanvasDevice } from "../libraries/wcgraph/CanvasDevice.js";
 import { WcWheelGrid } from "../libraries/graphs/wheel/WcWheelGrid.js";
-import { WheelSettings } from "../libraries/graphs/wheel/WheelSettings.js";
+import { WheelSettings, DarkWheelSettings } from "../libraries/graphs/wheel/WheelSettings.js";
 import { WcWheelSector } from "../libraries/graphs/wheel/WcWheelSector.js";
 import { WcWindowsCoordinateSystem } from "../libraries/wcgraph/WcWindowsCoordinateSystem.js";
 import { TangoPalette } from "../libraries/palette/TangoPalette.js";
@@ -27,7 +27,6 @@ class WheelGraphProps {
 export class WheelGraph extends ComponentBase {
     constructor() {
         super();
-        this.settings = new WheelSettings();
         this.wheel = { title: '', categories: [] };
         this.handleClick = () => {
             window.requestAnimationFrame(this.draw);
@@ -64,8 +63,18 @@ export class WheelGraph extends ComponentBase {
                 this.wheelComponent?.draw(renderer);
             }
         };
+        // Check if the device is in dark mode
+        this.isDarkMode = () => {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        };
         super.InitComponent(this);
         this.props = new WheelGraphProps(800, 800);
+        if (this.isDarkMode()) {
+            this.settings = new DarkWheelSettings();
+        }
+        else {
+            this.settings = new WheelSettings();
+        }
         this.viewport = new Rect(new Point(0, 0), new Point(this.props.width, this.props.height));
     }
     measureText(_text, _font) {
@@ -133,6 +142,7 @@ export class WheelGraph extends ComponentBase {
     }
     initializeChart() {
         let labelHeight = 0;
+        let dark = this.isDarkMode();
         const hasLabel = this.wheel.title != undefined && this.wheel.title != "";
         if (hasLabel) {
             labelHeight = this.settings.labelHeight;
@@ -156,16 +166,16 @@ export class WheelGraph extends ComponentBase {
         this.wheelComponent = this.createComponent("Wheel", wheelWorldBoundary, wheelArea);
         this.wheelComponent.world.addFigure(new WcRectangle(wheelWorldBoundary, this.settings.chartBackground, this.settings.chartBorder));
         //this.wheelComponent.world.addFigure(new WcText(this.wheel.title, new WcPointF(100, 900), this.settings.titleFont, this.settings.titleBrush, TextAlignment.LeftBottom));
-        this.wheelComponent.world.addFigure(new WcWheelGrid(new WcPointF(500, 500), this.wheel.categories, this.settings));
         const palette = new TangoPalette();
         const sectorAngle = 2 * Math.PI / this.wheel.categories.length;
         let sectorCount = 0;
         this.wheel.categories.forEach(category => {
             if (this.wheelComponent) {
-                this.wheelComponent.world.addFigure(new WcWheelSector(new WcPointF(500, 500), this.settings.calcAngle(sectorCount, sectorAngle), this.settings.calcAngle(sectorCount + 1, sectorAngle), category, palette.getColor(sectorCount), this.settings));
+                this.wheelComponent.world.addFigure(new WcWheelSector(new WcPointF(500, 500), this.settings.calcAngle(sectorCount, sectorAngle), this.settings.calcAngle(sectorCount + 1, sectorAngle), category, palette.getColor(sectorCount), this.settings, dark));
                 sectorCount++;
             }
         });
+        this.wheelComponent.world.addFigure(new WcWheelGrid(new WcPointF(500, 500), this.wheel.categories, this.settings));
     }
 }
 customElements.define('wheel-graph', WheelGraph);

@@ -16,7 +16,7 @@ export class WcWheelGrid extends WcFigure {
         const steps = 10;
         const radiusRange = this.settings.maxRadius - this.settings.minRadius;
         const backgroundRect = view.worldRectToDevice(WcRect.fromCenter(this.center, this.settings.maxRadius * 2, this.settings.maxRadius * 2));
-        renderer.drawEllipse(backgroundRect, this.settings.wheelBackground, Pen.none);
+        //        renderer.drawEllipse(backgroundRect, this.settings.wheelBackground, Pen.none);
         for (let step = 0; step <= steps; step++) {
             const radius = this.settings.minRadius + radiusRange * (step / steps);
             const circleRect = view.worldRectToDevice(WcRect.fromCenter(this.center, radius * 2, radius * 2));

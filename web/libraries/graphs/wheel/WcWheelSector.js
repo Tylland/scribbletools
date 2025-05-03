@@ -8,15 +8,21 @@ import { Arc } from "../../wcgraph/ArcTo.js";
 import { ColorInfo } from "../../palette/ColorInfo.js";
 import { TextAlignment } from "../../wcgraph/TextAlignment.js";
 export class WcWheelSector extends WcFigure {
-    constructor(center, startAngle, endAngle, category, color, settings) {
+    constructor(center, startAngle, endAngle, category, color, settings, dark) {
         super();
         this.center = center;
         this.startAngle = startAngle;
         this.endAngle = endAngle;
         this.category = category;
         this.settings = settings;
-        this.brush = new Brush(color.mediumHex);
-        this.pen = new Pen(color.darkHex, 1);
+        if (dark) {
+            this.brush = new Brush(color.lightHex);
+            this.pen = new Pen(color.mediumHex, 1);
+        }
+        else {
+            this.brush = new Brush(color.mediumHex);
+            this.pen = new Pen(color.darkHex, 1);
+        }
     }
     //drawLine(renderer: IRenderer, view: IWcView, startX: number, startY: number, endX: number, endY: number): void {
     //    let startPoint: Point = view.worldPointToDevice(new WcPointF(startX, startY));
