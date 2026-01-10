@@ -36,6 +36,9 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
     private wheel: Wheel = { title: '', categories: [] };
 
     private canvas!: HTMLCanvasElement;
+    private resizeObserver?: ResizeObserver;
+    private documentClickHandler?: (event: MouseEvent) => void;
+    private dropdownClickHandler?: (evt: Event) => void;
 
     constructor() {
         super();
@@ -60,16 +63,17 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
 
     async connectedCallback() {
         let self = this;
-        this.innerHTML = await InnerHtml.Import("/components/wheelgraph.html")
+        try {
+            this.innerHTML = await InnerHtml.Import("/components/wheelgraph.html");
+        } catch (error) {
+            console.error('Failed to load wheelgraph template:', error);
+            this.innerHTML = '<div class="text-red-500">Failed to load graph component</div>';
+            return;
+        }
 
         this.canvas = this.dataComponent<HTMLCanvasElement>("wheelCanvas");
 
-        this.canvas.onresize = function (evt: UIEvent) {
-            self.invalidate();
-        };
-
-        new ResizeObserver(entries => {
-
+        this.resizeObserver = new ResizeObserver(entries => {
             if (entries.length > 0) {
                 let { width } = entries[0].contentRect;
 
@@ -79,8 +83,8 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
                 self.initializeChart();
                 self.invalidate();
             }
-
-        }).observe(this.canvas);
+        });
+        this.resizeObserver.observe(this.canvas);
 
 
         this.initializeChart();
@@ -94,20 +98,21 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
         
 
         let dropdownButton = this.dataComponent("dropdown-button");
-
         let dropdown = this.dataComponent("dropdown") as HTMLDivElement;
 
-        dropdownButton.addEventListener("click", (evt: Event) => {
+        this.dropdownClickHandler = (evt: Event) => {
             dropdown.classList.toggle("hidden");
             evt.stopPropagation();
-        });
+        };
+        dropdownButton.addEventListener("click", this.dropdownClickHandler);
 
         // Close dropdown when clicking outside
-        document.addEventListener('click', (event: MouseEvent) => {
+        this.documentClickHandler = (event: MouseEvent) => {
             if (!dropdown.contains(event.target as Node) && !dropdown.classList.contains('hidden')) {
                 dropdown.classList.add('hidden');
             }
-        });
+        };
+        document.addEventListener('click', this.documentClickHandler);
 
         let downloadPNG = dropdown.querySelector('[data-component="downloadPNG"]');
         
@@ -123,7 +128,21 @@ export class WheelGraph extends ComponentBase implements IDevice, IJsonLoadable 
             this.download("jpg");
             dropdown.classList.add('hidden');
         });
+    }
 
+    disconnectedCallback() {
+        // Clean up ResizeObserver
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
+        }
+        // Clean up event listeners
+        if (this.documentClickHandler) {
+            document.removeEventListener('click', this.documentClickHandler);
+        }
+        if (this.dropdownClickHandler) {
+            const dropdownButton = this.querySelector('[data-component="dropdown-button"]');
+            dropdownButton?.removeEventListener("click", this.dropdownClickHandler);
+        }
     }
 
 

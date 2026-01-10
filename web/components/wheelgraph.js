@@ -82,12 +82,16 @@ export class WheelGraph extends ComponentBase {
     }
     async connectedCallback() {
         let self = this;
-        this.innerHTML = await InnerHtml.Import("/components/wheelgraph.html");
+        try {
+            this.innerHTML = await InnerHtml.Import("/components/wheelgraph.html");
+        }
+        catch (error) {
+            console.error('Failed to load wheelgraph template:', error);
+            this.innerHTML = '<div class="text-red-500">Failed to load graph component</div>';
+            return;
+        }
         this.canvas = this.dataComponent("wheelCanvas");
-        this.canvas.onresize = function (evt) {
-            self.invalidate();
-        };
-        new ResizeObserver(entries => {
+        this.resizeObserver = new ResizeObserver(entries => {
             if (entries.length > 0) {
                 let { width } = entries[0].contentRect;
                 this.canvas.width = width;
@@ -95,23 +99,26 @@ export class WheelGraph extends ComponentBase {
                 self.initializeChart();
                 self.invalidate();
             }
-        }).observe(this.canvas);
+        });
+        this.resizeObserver.observe(this.canvas);
         this.initializeChart();
         this.draw();
         // let downloadCanvas = this.dataQuery("downloadCanvas")
         // downloadCanvas.addEventListener("click", () => { self.download(); })
         let dropdownButton = this.dataComponent("dropdown-button");
         let dropdown = this.dataComponent("dropdown");
-        dropdownButton.addEventListener("click", (evt) => {
+        this.dropdownClickHandler = (evt) => {
             dropdown.classList.toggle("hidden");
             evt.stopPropagation();
-        });
+        };
+        dropdownButton.addEventListener("click", this.dropdownClickHandler);
         // Close dropdown when clicking outside
-        document.addEventListener('click', (event) => {
+        this.documentClickHandler = (event) => {
             if (!dropdown.contains(event.target) && !dropdown.classList.contains('hidden')) {
                 dropdown.classList.add('hidden');
             }
-        });
+        };
+        document.addEventListener('click', this.documentClickHandler);
         let downloadPNG = dropdown.querySelector('[data-component="downloadPNG"]');
         downloadPNG?.addEventListener("click", (evt) => {
             this.download("png");
@@ -122,6 +129,20 @@ export class WheelGraph extends ComponentBase {
             this.download("jpg");
             dropdown.classList.add('hidden');
         });
+    }
+    disconnectedCallback() {
+        // Clean up ResizeObserver
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
+        }
+        // Clean up event listeners
+        if (this.documentClickHandler) {
+            document.removeEventListener('click', this.documentClickHandler);
+        }
+        if (this.dropdownClickHandler) {
+            const dropdownButton = this.querySelector('[data-component="dropdown-button"]');
+            dropdownButton?.removeEventListener("click", this.dropdownClickHandler);
+        }
     }
     set width(value) {
         this.props.width = value;

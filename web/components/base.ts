@@ -1,3 +1,7 @@
+export interface EventData {
+    [key: string]: unknown;
+}
+
 export class ComponentBase extends HTMLElement {
     private parent : ParentNode | undefined;
     private target : EventTarget| undefined;
@@ -6,7 +10,7 @@ export class ComponentBase extends HTMLElement {
         super();
     }
 
-    public InitComponent(component: any) {
+    public InitComponent(component: HTMLElement) {
         this.parent = component as ParentNode
         this.target = component as EventTarget
     }
@@ -29,7 +33,7 @@ export class ComponentBase extends HTMLElement {
         this.dataComponent(name).addEventListener(eventName, listener);
     }
 
-    protected emitEvent(name: string, detail: any) {
+    protected emitEvent(name: string, detail: EventData) {
         const event = new CustomEvent(name, {
             detail: detail,
             bubbles: true

@@ -8,6 +8,9 @@ import { ComponentBase } from "./base.ts";
 export class WheelInput extends ComponentBase {
     private parser: WheelParser;
     private textarea!: HTMLDivElement;
+    private documentClickHandler?: (event: MouseEvent) => void;
+    private textareaInputHandler?: (evt: Event) => void;
+    private dropdownClickHandler?: (evt: Event) => void;
 
     constructor() {
         super();
@@ -16,24 +19,21 @@ export class WheelInput extends ComponentBase {
         this.parser = new WheelParser();
     }
 
-    dataComponent<E extends Element = Element>(name: string):E {
-        let element = this.querySelector<E>('[data-component="' + name + '"]')
-
-        if(element == null){
-            throw new Error("data-component wtih value '" + name + "' is not found but required")
-        } 
-
-        return element 
-    }
-
     async connectedCallback(){
-        this.innerHTML = await InnerHtml.Import("/components/wheelinput.html");
+        try {
+            this.innerHTML = await InnerHtml.Import("/components/wheelinput.html");
+        } catch (error) {
+            console.error('Failed to load wheelinput template:', error);
+            this.innerHTML = '<div class="text-red-500">Failed to load component</div>';
+            return;
+        }
 
         this.textarea = this.dataComponent<HTMLDivElement>("wheelInput")
 
-        this.textarea.addEventListener("input", (evt:Event) => {
+        this.textareaInputHandler = (evt: Event) => {
             this.loadText(this.textarea?.innerText ?? "")
-        });
+        };
+        this.textarea.addEventListener("input", this.textareaInputHandler);
 
 
         let scribble = '"Endurance" : 6';
@@ -53,17 +53,19 @@ export class WheelInput extends ComponentBase {
         let dropdownButton = this.dataComponent("dropdown-button");
         let dropdown = this.dataComponent("dropdown");
 
-        dropdownButton.addEventListener("click", (evt: Event) => {
+        this.dropdownClickHandler = (evt: Event) => {
             dropdown.classList.toggle("hidden");
             evt.stopPropagation();
-        })
+        };
+        dropdownButton.addEventListener("click", this.dropdownClickHandler);
         
-         // Close dropdown when clicking outside
-         document.addEventListener('click', (event: MouseEvent) => {
+        // Close dropdown when clicking outside
+        this.documentClickHandler = (event: MouseEvent) => {
             if (!dropdown.contains(event.target as Node) && !dropdown.classList.contains('hidden')) {
                 dropdown.classList.add('hidden');
             }
-        });
+        };
+        document.addEventListener('click', this.documentClickHandler);
 
         this.loadText = this.loadText.bind(this);
 
@@ -102,7 +104,20 @@ export class WheelInput extends ComponentBase {
         const scribble = btoa(text.trimEnd());
 
         window.history.pushState(scribble, '', 'index.html?scribble=' + encodeURI(scribble));
+    }
 
+    disconnectedCallback() {
+        // Clean up event listeners to prevent memory leaks
+        if (this.textareaInputHandler) {
+            this.textarea.removeEventListener("input", this.textareaInputHandler);
+        }
+        if (this.documentClickHandler) {
+            document.removeEventListener('click', this.documentClickHandler);
+        }
+        if (this.dropdownClickHandler) {
+            const dropdownButton = this.querySelector('[data-component="dropdown-button"]');
+            dropdownButton?.removeEventListener("click", this.dropdownClickHandler);
+        }
     }
 }
 
